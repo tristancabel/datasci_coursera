@@ -1,0 +1,4 @@
+/*10080_txt_crude' and '17035_txt_earn' */
+
+SELECT sum(i.count*j.count) FROM (SELECT term,count FROM frequency WHERE docid="10080_txt_crude") AS i JOIN (SELECT term,count FROM frequency WHERE docid="17035_txt_earn") AS j WHERE i.term=j.term; 
+

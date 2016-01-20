@@ -1,0 +1,1 @@
+SELECT count(*) FROM (SELECT docid FROM frequency WHERE term="transactions") AS A JOIN (SELECT docid FROM frequency WHERE term="world") AS B WHERE A.docid=B.docid ;
