@@ -12,8 +12,7 @@ mr = MapReduce.MapReduce()
 
 def mapper(record):
     unique_id = record[0]
-    seq = record[1]
-    print seq[0:-10]
+    seq = record[1][0:-10]
     mr.emit_intermediate(seq, 1)
 
     

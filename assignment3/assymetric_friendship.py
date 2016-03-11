@@ -21,6 +21,7 @@ def reducer(key, list_of_values):
     # value: list of 1 or 0. 
     if (sum(list_of_values) == 0):
         mr.emit((key[0], key[1]))
+        mr.emit((key[1], key[0]))
     #else:
     #    print "NO",key,list_of_values
 
