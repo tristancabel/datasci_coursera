@@ -1,4 +1,0 @@
-SELECT sum(i.value*j.value) FROM (SELECT col_num,value FROM A WHERE row_num=2) AS i JOIN (SELECT row_num,value FROM B WHERE col_num=3) AS j WHERE i.col_num=j.row_num; 
-
-/*SELECT col_num,value FROM A WHERE row_num=2; 
-SELECT row_num,value FROM B WHERE col_num=3; */

@@ -1,2 +1,0 @@
-/* select count(*) from (select docid FROM frequency where docid not in (SELECT docid  FROM frequency WHERE term="law") and term="legal") JOIN */
-select * from (SELECT docid  FROM frequency WHERE term="law") JOIN (select docid FROM frequency where docid not in (SELECT docid  FROM frequency WHERE term="law") and term="legal") ;

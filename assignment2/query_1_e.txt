@@ -1,3 +1,0 @@
- SELECT count(*) FROM (SELECT docid FROM frequency GROUP BY docid HAVING count(term)>300) ; 
-
-/*SELECT * FROM (SELECT docid,sum(count) AS tot FROM frequency GROUP BY docid ) WHERE tot>300  ; */
