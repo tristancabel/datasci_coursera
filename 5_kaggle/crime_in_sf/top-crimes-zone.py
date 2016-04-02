@@ -104,4 +104,4 @@ def main(filepath):
 
 
 if __name__ == '__main__':
-    sys.exit(main('../input/train.csv.zip'))
+    sys.exit(main('train.csv.zip'))
