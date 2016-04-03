@@ -37,26 +37,25 @@ def plot_by_day(df, column, title, fname, hue):
     bar   = col_freq.plot(kind='bar', x='DayOfWeek', y='count', title=title, fontsize=8, figsize=(12,8), stacked=False, width=1, color=color)
     bar.figure.savefig(fname)
     
-def periodOfDay(row):
+def periodOfDay(row, applyday=1):
     day_offset = {'Monday':0 , 'Tuesday':24, 'Wednesday':48, 'Thursday':72, 'Friday':96, 'Saturday':120, 'Sunday':144 }
     t = row['Time'].split(':')
-    res = day_offset[row['DayOfWeek']] + int(t[0])
+    res = day_offset[row['DayOfWeek']]*applyday + int(t[0])
     return res
 
 def plot_by_hour(df, title, fname, hue):
+    plt.close('all')
+    f, (ax1, ax2) = plt.subplots(2, 1)
+
     #group by every hour during a week.
-    #so Monday [00:00, 00:59] = 0; Monday [02:00,02:59] = 2;
-    df['HourOfWeek'] = df.apply (lambda row: periodOfDay(row),axis=1)
-
     col_freq = df.groupby('HourOfWeek').size()
-    color = sns.color_palette(hue, len(col_freq))
-    plt.figure()
-    line2d   = col_freq.plot(title=title, fontsize=8, figsize=(12,8), stacked=False, marker='o')
+    line = col_freq.plot(ax=ax1, title=title + ' distribution during a week', fontsize=8, stacked=False, marker='o', xticks=np.arange(0, 168, 12))
 
-    # major ticks every 12, minor ticks every 6
-    line2d.set_xticks(np.arange(0, 168, 12))
-    line2d.set_xticks( np.arange(0, 168, 6), minor=True)
-    line2d.figure.savefig(fname)
+    col_freq2 = df.groupby('Hour').size()
+    line2 = col_freq2.plot(ax=ax2, title=title + ' distribution during a day', fontsize=8, stacked=False, marker='o', xticks=np.arange(0, 24, 6))
+
+    f.subplots_adjust(hspace=.5)
+    f.savefig(fname)
     
 
 def plot_location(df, fname):
@@ -93,16 +92,20 @@ def main(filepath):
     print 'reading data'
     df = input_transformer(filepath)
     
-    #filter unused data
+    #filter unused data and add 2 new columns
     print 'filter data'
     df.drop(['Descript', 'PdDistrict', 'Address'],inplace=True,axis=1)
-
+    #so Monday [00:00, 00:59] = 0; Monday [02:00,02:59] = 2;
+    df['HourOfWeek'] = df.apply (lambda row: periodOfDay(row),axis=1)
+    df['Hour'] = df.apply (lambda row: periodOfDay(row, 0),axis=1)
+    
     #plot by crime category
     plot_bar(df, 'Category', 'Top Crime Categories', 'category.png', 'spectral')
 
     print 'plot by day'
     plot_by_day(df, 'DayOfWeek', 'crimes per day', 'crimes_per_day.png', 'muted')
-    plot_by_hour(df, 'crime distribution during a week', 'crimes_distribution_per_hour.png', 'pastel')
+    plot_by_hour(df, 'crime', 'crimes_distribution_per_hour.png', 'pastel')
+
     print "map all crimes"
     plot_location(df, 'map_all_crimes.png')
 
@@ -116,14 +119,8 @@ def main(filepath):
     #plot by time and day
     print 'plot Larceny by day'
     plot_by_day(df_larceny, 'DayOfWeek', 'Larceny crime per day', 'larceny_per_day.png', 'muted')
-    plot_by_hour(df_larceny, 'Larceny crime during a week', 'larceny_per_hour.png', 'pastel')
+    plot_by_hour(df_larceny, 'Larceny', 'larceny_per_hour.png', 'pastel')
 
-    # crimes without larceny
-    #print 'map crimes without larceny'
-    #df_wh = df[df['Category']!='LARCENY/THEFT']
-    #df_wh = df_wh[df_wh['Category']!='NON-CRIMINAL']
-    #df_wh = df_wh[df_wh['Category']!='OTHER OFFENSES']
-    #plot_location(df_wh, 'map_wh_3.png')
     #plt.show()
 
 
